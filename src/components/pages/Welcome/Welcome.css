@@ -1,0 +1,26 @@
+#welcome-page{
+  font-family: 'Merriweather', serif;
+}
+
+#welcome-image{
+    width: 200px;
+    margin-top: 0px;
+}
+
+.buttons{
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+.button-1, .button-2{
+    border-radius: 20px;
+    width: 100%;
+    align-items: center;
+    border: 1px solid #FF7F50;
+    height: 40px;
+    padding: 8px 17px;
+    background-color: #FF7F50;
+    color: aliceblue;
+    font-weight: bold;
+    cursor: pointer;
+}
