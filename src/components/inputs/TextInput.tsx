@@ -1,9 +1,10 @@
 import React from 'react'
+import './textinput.css'
 
 type TextInputProps = {
     id?: string,
     value?: string
-    onChange: React.ChangeEventHandler<HTMLInputElement>,
+    onChange?: React.ChangeEventHandler<HTMLInputElement>,
     label: string,
     error?: string,
     name?: string,

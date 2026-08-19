@@ -11,10 +11,11 @@ export const Register = () => {
         <TextComponent variant='h3'>WELCOME</TextComponent>
 <TextComponent variant='h1'>Sign Up</TextComponent>
 <div className='register-fields'>
-
-<TextInput label='Name' id='name' placeholder='enter name' type='text'></TextInput>
-<TextInput label='Surname' id='name' placeholder='enter name' type='text'></TextInput>
-<TextInput label='Email' id='name' placeholder='enter name' type='text'></TextInput>
+<TextInput label='Name' id='name' placeholder='eg. Mark' type='text' ></TextInput>
+<TextInput label='Surname' id='surname' placeholder='eg. Johnson' type='text'></TextInput>
+<TextInput label='Email' id='email' placeholder='markjohnson@example.com' type='email'></TextInput>
+<TextInput label='Password' id='password' placeholder='*********' type='password'></TextInput>
+<TextInput label='Cell Number' id='cellNumber' placeholder='(+27) 123 456 789' type='cellNumber'></TextInput>
 </div>
     </div>
   )
