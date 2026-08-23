@@ -10,8 +10,6 @@ import { useState } from 'react'
 export const Register = () => {
     const [agreeToTerms, setAgreeToTerms] = useState<boolean>(false);
 
-
-
     const handleCheck = (e: React.ChangeEvent<HTMLInputElement>) => {
         setAgreeToTerms(e.target.checked);
     }
@@ -30,7 +28,7 @@ export const Register = () => {
                 <TextInput label='Cell Number' id='cellNumber' placeholder='(+27) 123 456 789' type='cellNumber'></TextInput>
 
                 <CheckboxInput id='agree-checkbox' name='terms' checked={agreeToTerms} onChange={handleCheck} label={' I agree to the Terms & Conditions.'} />
-                <ButtonComponent onClick={() => navigate('/Register')} className='button-2'>Sign Up</ButtonComponent>
+                <ButtonComponent onClick={() => navigate('/Home')} className='button-2'>Sign Up</ButtonComponent>
             </div>
         </div>
     )

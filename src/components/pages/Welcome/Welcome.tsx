@@ -13,7 +13,7 @@ export const Welcome = () => {
         <img src={welcomeImage} style={{margin: 'auto'}} alt='Welcome Screen Image' id='welcome-image'/>
         <TextComponent variant='h4' style={{textAlign: 'center', marginTop: '20px'}}>Shopping lists made easier with My Shop Aisle app!</TextComponent>
         <div className='buttons'>
-        <ButtonComponent onClick={() => navigate('')} className='button-1'>Sign In</ButtonComponent>
+        <ButtonComponent onClick={() => navigate('/Login')} className='button-1'>Sign In</ButtonComponent>
         <ButtonComponent onClick={() => navigate('/Register')} className='button-2'>Sign Up</ButtonComponent>
         </div>
         <TextComponent variant='p'>By joining My Shop Aisle you agree to our Terms of Service, Privacy Policy, and Acts Policy.</TextComponent>
