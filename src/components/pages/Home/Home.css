@@ -18,7 +18,7 @@
     background-color: greenyellow;
 }
 
-#main-screen{
+.main-screen{
     width: 75%;
     background-color: aliceblue;
 }
@@ -34,4 +34,14 @@
 
 #home-bar, #profile-bar{
     background-color: rgba(255, 255, 255, 0.9);
+}
+
+.main-content{
+    display: flex;
+    flex-direction: row;
+}
+
+#buttons{
+    display: flex;
+    flex-direction: row;
 }

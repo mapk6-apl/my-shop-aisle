@@ -7,7 +7,7 @@ import profileBar from '../../../assets/profile.png'
 import logoutIcon from '../../../assets/logout.png'
 import { useNavigate } from 'react-router'
 
-export const Home = () => {
+export const Profile = () => {
     const navigate = useNavigate();
     return (
         <div className='home-screen'>
