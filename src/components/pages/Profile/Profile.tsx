@@ -24,7 +24,7 @@ export const Profile = () => {
                     <TextComponent variant='p' style={{ marginTop: '-20px', fontSize: '14px', textAlign: 'center' }}>Welcome Back!</TextComponent>
                     <TextComponent variant='p' style={{ marginTop: '-20px', fontSize: '14px', textAlign: 'center' }}>Hi, xxxx!</TextComponent>
                     <div id='home-bar'>
-                        <img src={homeBar} alt='Home Bar Icon' id='home-bar-icon' />
+                        <img src={homeBar} onClick={() => navigate('/Home')} style={{ cursor: 'pointer' }} alt='Home Bar Icon' id='home-bar-icon' />
                         <TextComponent variant='p' style={{ marginTop: '-20px', fontSize: '14px', textAlign: 'center' }}>Home</TextComponent>
                     </div>
                     <div id='profile-bar'>
@@ -34,16 +34,8 @@ export const Profile = () => {
                     <img src={logoutIcon} alt='Logout Icon' onClick={() => navigate('/')} id='logout-icon' style={{ cursor: 'pointer' }} />
                     <TextComponent variant='p' style={{ marginTop: '-20px', fontSize: '14px', textAlign: 'center' }}>Logout</TextComponent></div>
                 <div className='main-screen'>
-                    <TextComponent variant='h4' style={{ marginTop: '10px' }}>My Lists</TextComponent>
-                    <div id='buttons'>
-                        <ButtonComponent onClick={() => navigate('')} className='show-all-button'>All</ButtonComponent>
-                        <ButtonComponent onClick={() => navigate('')} className='show-all-button'>Show Filters</ButtonComponent>
-                        <ButtonComponent onClick={() => navigate('')} className='show-all-button'>Sort By: </ButtonComponent>
-                        <ButtonComponent onClick={() => navigate('')} className='show-all-button'>Add New Item</ButtonComponent>
-                    </div>
-                    <div id='table'>
+                    <TextComponent variant='h4' style={{ marginTop: '10px' }}>My Profile</TextComponent>
                     
-                    </div>
                 </div>
             </main>
             <div className='container'></div>

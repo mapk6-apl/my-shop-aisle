@@ -4,12 +4,13 @@ type Props = {
     variant?: string
     children: React.ReactNode
     style?: React.CSSProperties
+    className?: string
 }
 
-export const TextComponent: React.FC<Props> = ({ variant, children, style }) => {
+export const TextComponent: React.FC<Props> = ({ variant, children, style, className }) => {
   if(variant === 'h1') {
     return (
-      <h1 style={style}>
+      <h1 style={style} className={''}>
         {children}
       </h1>
     )
