@@ -5,7 +5,7 @@ import profileIcon from '../../../assets/woman.png'
 import homeBar from '../../../assets/home.png'
 import profileBar from '../../../assets/profile.png'
 import logoutIcon from '../../../assets/logout.png'
-import { useNavigate } from 'react-router'
+import { useNavigate, useSearchParams } from 'react-router'
 import { useState } from 'react'
 import { useShoppingList } from '../../hooks/ShoppingList'
 import { AddItem } from '../../AddItem/AddItem'
@@ -13,29 +13,46 @@ import { Overlay } from '../../Overlay/Overlay'
 import type { ShoppingItem } from '../../types/ShoppingItem'
 import './Home.css'
 
-type SortOption = 'name' | 'quantity-asc' | 'quantity-desc' | 'category'
+type SortOption = 'name' | 'category' | 'date-added'
 
 const sortLabels: Record<SortOption, string> = {
     'name': 'Name',
     'category': 'Category',
-    'quantity-asc': 'Quantity - Low to High',
-    'quantity-desc': 'Quantity - High to Low'
+    'date-added': 'Date Added'
 }
 
 export const Home = () => {
     const navigate = useNavigate();
     const { items, addItem, editItem, deleteItem, toggleChecked } = useShoppingList();
+    const [searchParams, setSearchParams] = useSearchParams();
 
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editingItem, setEditingItem] = useState<ShoppingItem | null>(null);
-    const [searchQuery, setSearchQuery] = useState('');
     const [deleteTarget, setDeleteTarget] = useState<ShoppingItem | null>(null);
 
     const [showSortMenu, setShowSortMenu] = useState(false);
-    const [sortBy, setSortBy] = useState<SortOption>('name');
-
     const [showFilters, setShowFilters] = useState(false);
     const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
+
+    const searchQuery = searchParams.get('search') || '';
+    const sortBy = (searchParams.get('sort') as SortOption) || 'name';
+
+    const updateSearch = (value: string) => {
+        const next = new URLSearchParams(searchParams);
+        if (value) {
+            next.set('search', value);
+        } else {
+            next.delete('search');
+        }
+        setSearchParams(next);
+    }
+
+    const updateSort = (value: SortOption) => {
+        const next = new URLSearchParams(searchParams);
+        next.set('sort', value);
+        setSearchParams(next);
+        setShowSortMenu(false);
+    }
 
     const openAddModal = () => {
         setEditingItem(null);
@@ -81,8 +98,7 @@ export const Home = () => {
     const sortedItems = [...visibleItems].sort((a, b) => {
         if (sortBy === 'name') return a.name.localeCompare(b.name);
         if (sortBy === 'category') return a.category.localeCompare(b.category);
-        if (sortBy === 'quantity-asc') return a.quantity - b.quantity;
-        return b.quantity - a.quantity; // quantity-desc
+        return Number(a.id) - Number(b.id);
     })
 
     return (
@@ -95,7 +111,7 @@ export const Home = () => {
                         type='text'
                         placeholder='Search items...'
                         value={searchQuery}
-                        onChange={(e) => setSearchQuery(e.target.value)}
+                        onChange={(e) => updateSearch(e.target.value)}
                         id='search-input'
                     />
                 </div>
@@ -122,7 +138,7 @@ export const Home = () => {
                     <div className='list-header'>
                         <div>
                             <TextComponent variant='h4'>My Lists</TextComponent>
-                            <TextComponent variant='p' className='list-subtitle'>{items.length} items on the list</TextComponent>
+                            <TextComponent variant='p' className='list-subtitle'>{items.length} item(s) on the list</TextComponent>
                         </div>
                         <ButtonComponent onClick={openAddModal} className='add-item-button'>+ Add New Item</ButtonComponent>
                     </div>
@@ -167,7 +183,7 @@ export const Home = () => {
                                         <div
                                             key={option}
                                             className={sortBy === option ? 'sort-option sort-option-active' : 'sort-option'}
-                                            onClick={() => { setSortBy(option); setShowSortMenu(false); }}
+                                            onClick={() => updateSort(option)}
                                         >
                                             {sortBy === option && <span className='check-mark'>✓</span>}
                                             {sortLabels[option]}
@@ -183,6 +199,7 @@ export const Home = () => {
                             <thead>
                                 <tr>
                                     <th></th>
+                                    <th></th>
                                     <th>Name</th>
                                     <th>Quantity</th>
                                     <th>Category</th>
@@ -193,7 +210,7 @@ export const Home = () => {
                             <tbody>
                                 {sortedItems.length === 0 && (
                                     <tr>
-                                        <td colSpan={6} className='empty-row'>No items yet.</td>
+                                        <td colSpan={7} className='empty-row'>No items yet.</td>
                                     </tr>
                                 )}
                                 {sortedItems.map(item => (

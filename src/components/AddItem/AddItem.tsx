@@ -3,6 +3,7 @@ import { Overlay } from '../Overlay/Overlay'
 import { TextComponent } from '../../TextComponent'
 import { ButtonComponent } from '../../ButtonComponent'
 import { TextInput } from '../inputs/TextInput'
+import closeIcon from '../../assets/close.png'
 import type { ShoppingItem } from '../types/ShoppingItem'
 import './AddItem.css'
 
@@ -56,27 +57,34 @@ export const AddItem: React.FC<AddItemProps> = ({ isVisible, onClose, onSave, ed
         <Overlay>
             <div className='add-item-form'>
                 <div className='add-item-header'>
-                    <TextComponent variant='h3'>{editingItem ? 'Edit Item' : 'Create Item'}</TextComponent>
-                    <button className='close-button' onClick={onClose} aria-label='Close'>&times;</button>
+                    <TextComponent variant='h3'>{editingItem ? 'Edit Item' : 'Add New Item'}</TextComponent>
+                    <img src={closeIcon} alt='Close' onClick={onClose} className='close-icon' />
                 </div>
 
                 <TextComponent variant='p' className='form-section-label'>Details</TextComponent>
 
-                <div className='form-row'>
+                <div className='form-field'>
                     <TextInput label='Name' id='item-name' placeholder='eg. Milk' type='text'
                         value={name} onChange={(e) => setName(e.target.value)} />
-
-                    <TextInput label='Category' id='item-category' placeholder='eg. Dairy' type='text'
-                        value={category} onChange={(e) => setCategory(e.target.value)} />
                 </div>
 
-                <TextInput label='Quantity' id='item-quantity' placeholder='1' type='number'
-                    value={quantity} onChange={(e) => setQuantity(e.target.value)} />
+                <div className='form-row'>
+                    <div className='form-field'>
+                        <TextInput label='Category' id='item-category' placeholder='eg. Dairy' type='text'
+                            value={category} onChange={(e) => setCategory(e.target.value)} />
+                    </div>
+                    <div className='form-field'>
+                        <TextInput label='Quantity' id='item-quantity' placeholder='1' type='number'
+                            value={quantity} onChange={(e) => setQuantity(e.target.value)} />
+                    </div>
+                </div>
 
-                <TextInput label='Notes (optional)' id='item-notes' placeholder='Enter any notes about this item...' type='text'
-                    value={notes} onChange={(e) => setNotes(e.target.value)} />
+                <div className='form-field'>
+                    <TextInput label='Notes (optional)' id='item-notes' placeholder='Enter any notes about this item...' type='text'
+                        value={notes} onChange={(e) => setNotes(e.target.value)} />
+                </div>
 
-                <TextComponent variant='p' className='form-section-label' style={{ marginTop: '20px' }}>Image</TextComponent>
+                <TextComponent variant='p' className='form-section-label'>Image</TextComponent>
                 <div className='image-upload-row'>
                     {image ? (
                         <img src={image} alt='Item preview' className='image-preview' />
