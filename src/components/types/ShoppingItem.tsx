@@ -7,11 +7,3 @@ export type ShoppingItem = {
     isChecked: boolean
     image: string | null
 }
-
-export type Profile = {
-    id: number
-    name: string
-    surname: string
-    cellNumber: string
-    picture: string | null
-}

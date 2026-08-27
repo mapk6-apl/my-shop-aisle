@@ -5,28 +5,54 @@ import defaultProfileIcon from '../../../assets/woman.png'
 import homeBar from '../../../assets/home.png'
 import profileBar from '../../../assets/profile.png'
 import logoutIcon from '../../../assets/logout.png'
-import { useNavigate } from 'react-router'
-import { useState, useRef } from 'react'
+import { useNavigate, useLocation } from 'react-router'
+import { useState, useEffect, useRef } from 'react'
+import { useAppDispatch, useAppSelector } from '../../../store/hooks'
+import { fetchProfile, updateProfile } from '../../../store/profileSlice'
+import '../Home/Home.css'
 
 export const Profile = () => {
     const navigate = useNavigate();
+    const location = useLocation();
+    const dispatch = useAppDispatch();
+    const profile = useAppSelector(state => state.profile.profile);
     const fileInputRef = useRef<HTMLInputElement>(null);
 
-    const [profilePicture, setProfilePicture] = useState<string | null>(() => {
-        return localStorage.getItem('profile-picture')
-    });
+    const [name, setName] = useState('');
+    const [surname, setSurname] = useState('');
+    const [cellNumber, setCellNumber] = useState('');
+    const [saved, setSaved] = useState(false);
+
+    useEffect(() => {
+        dispatch(fetchProfile());
+    }, [dispatch]);
+
+    useEffect(() => {
+        if (profile) {
+            setName(profile.name);
+            setSurname(profile.surname);
+            setCellNumber(profile.cellNumber);
+        }
+    }, [profile]);
 
     const handlePictureChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
         if (!file) return;
         const reader = new FileReader();
         reader.onload = () => {
-            const result = reader.result as string;
-            setProfilePicture(result);
-            localStorage.setItem('profile-picture', result);
+            dispatch(updateProfile({ picture: reader.result as string }));
         }
         reader.readAsDataURL(file);
     }
+
+    const handleSaveChanges = async () => {
+        await dispatch(updateProfile({ name, surname, cellNumber }));
+        setSaved(true);
+        setTimeout(() => setSaved(false), 2000);
+    }
+
+    const isHomeActive = location.pathname.toLowerCase() === '/home';
+    const isProfileActive = location.pathname.toLowerCase() === '/profile';
 
     return (
         <div className='home-screen'>
@@ -39,14 +65,14 @@ export const Profile = () => {
 
             <main className='main-content'>
                 <div id='side-bar'>
-                    <img src={profilePicture || defaultProfileIcon} alt='Profile Icon' id='profile-icon' />
+                    <img src={profile?.picture || defaultProfileIcon} alt='Profile Icon' id='profile-icon' />
                     <TextComponent variant='p'>Welcome Back!</TextComponent>
-                    <TextComponent variant='p'>Hi, xxxx!</TextComponent>
-                    <div id='home-bar'>
-                        <img src={homeBar} onClick={() => navigate('/Home')} alt='Home Bar Icon' id='home-bar-icon' />
+                    <TextComponent variant='p'>Hi, {profile?.name || 'there'}!</TextComponent>
+                    <div id='home-bar' className={isHomeActive ? 'nav-item nav-item-active' : 'nav-item'} onClick={() => navigate('/Home')}>
+                        <img src={homeBar} alt='Home Bar Icon' id='home-bar-icon' />
                         <TextComponent variant='p'>Home</TextComponent>
                     </div>
-                    <div id='profile-bar'>
+                    <div id='profile-bar' className={isProfileActive ? 'nav-item nav-item-active' : 'nav-item'}>
                         <img src={profileBar} alt='Profile Bar Icon' id='profile-bar-icon' />
                         <TextComponent variant='p'>Profile</TextComponent>
                     </div>
@@ -58,7 +84,7 @@ export const Profile = () => {
                     <TextComponent variant='h4'>My Profile</TextComponent>
 
                     <div className='profile-picture-row'>
-                        <img src={profilePicture || defaultProfileIcon} alt='Current profile' className='profile-large-avatar' />
+                        <img src={profile?.picture || defaultProfileIcon} alt='Current profile' className='profile-large-avatar' />
                         <div>
                             <ButtonComponent onClick={() => fileInputRef.current?.click()} className='update-picture-button'>
                                 Update Picture
@@ -72,6 +98,24 @@ export const Profile = () => {
                             />
                         </div>
                     </div>
+
+                    <div className='profile-form-field'>
+                        <label>Name</label>
+                        <input value={name} onChange={(e) => setName(e.target.value)} />
+                    </div>
+                    <div className='profile-form-field'>
+                        <label>Surname</label>
+                        <input value={surname} onChange={(e) => setSurname(e.target.value)} />
+                    </div>
+                    <div className='profile-form-field'>
+                        <label>Cell Number</label>
+                        <input value={cellNumber} onChange={(e) => setCellNumber(e.target.value)} />
+                    </div>
+
+                    <ButtonComponent onClick={handleSaveChanges} className='save-profile-button'>
+                        Save Changes
+                    </ButtonComponent>
+                    {saved && <TextComponent variant='p' className='form-success'>Profile updated!</TextComponent>}
                 </div>
             </main>
         </div>

@@ -14,6 +14,7 @@ import { AddItem } from '../../AddItem/AddItem'
 import { Overlay } from '../../Overlay/Overlay'
 import type { ShoppingItem } from '../../types/ShoppingItem'
 import './Home.css'
+import { fetchProfile } from '../../../store/profileSlice'
 
 type SortOption = 'name' | 'category' | 'date-added'
 
@@ -28,6 +29,7 @@ export const Home = () => {
     const dispatch = useAppDispatch();
     const items = useAppSelector(state => state.shoppingList.items);
     const status = useAppSelector(state => state.shoppingList.status);
+    const profile = useAppSelector(state => state.profile.profile);
 
     const [searchParams, setSearchParams] = useSearchParams();
 
@@ -46,6 +48,7 @@ export const Home = () => {
 
     useEffect(() => {
         dispatch(fetchItems());
+        dispatch(fetchProfile());
     }, [dispatch]);
 
     useEffect(() => {
@@ -145,15 +148,15 @@ export const Home = () => {
 
             <main className='main-content'>
                 <div id='side-bar'>
-                    <img src={profileIcon} alt='Profile Icon' id='profile-icon' />
+                    <img src={profile?.picture || profileIcon} alt='Profile Icon' id='profile-icon' />
                     <TextComponent variant='p'>Welcome Back!</TextComponent>
-                    <TextComponent variant='p'>Hi, xxxx!</TextComponent>
-                    <div id='home-bar' className={isHomeActive ? 'nav-item nav-item-active' : 'nav-item'}>
-                        <img src={homeBar} onClick={() => navigate('/Home')} alt='Home Bar Icon' id='home-bar-icon' />
+                    <TextComponent variant='p'>Hi, {profile?.name || 'there'}!</TextComponent>
+                    <div id='home-bar' onClick={() => navigate('/Home')} className={isHomeActive ? 'nav-item nav-item-active' : 'nav-item'}>
+                        <img src={homeBar} alt='Home Bar Icon' id='home-bar-icon' />
                         <TextComponent variant='p'>Home</TextComponent>
                     </div>
-                    <div id='profile-bar' className={isProfileActive ? 'nav-item nav-item-active' : 'nav-item'}>
-                        <img src={profileBar} alt='Profile Bar Icon' onClick={() => navigate('/Profile')} id='profile-bar-icon' />
+                    <div id='profile-bar' onClick={() => navigate('/Profile')} className={isProfileActive ? 'nav-item nav-item-active' : 'nav-item'}>
+                        <img src={profileBar} alt='Profile Bar Icon' id='profile-bar-icon' />
                         <TextComponent variant='p'>Profile</TextComponent>
                     </div>
                     <img src={logoutIcon} alt='Logout Icon' onClick={() => navigate('/')} id='logout-icon' />
@@ -218,51 +221,51 @@ export const Home = () => {
                                 </div>
                             )}
                         </div>
-                        </div>
-
-                        <div className='table-wrapper'>
-                            {status === 'loading' && <TextComponent variant='p' className='empty-row'>Loading...</TextComponent>}
-
-                            {status !== 'loading' && (
-                                <table id='item-table'>
-                                    <thead>
-                                        <tr>
-                                            <th></th>
-                                            <th>Name</th>
-                                            <th>Quantity</th>
-                                            <th>Category</th>
-                                            <th>Notes</th>
-                                            <th>Actions</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {sortedItems.length === 0 && (
-                                            <tr>
-                                                <td colSpan={6} className='empty-row'>No items yet.</td>
-                                            </tr>
-                                        )}
-                                        {sortedItems.map(item => (
-                                            <tr key={item.id}>
-                                                <td>
-                                                    {item.image
-                                                        ? <img src={item.image} alt={item.name} className='item-thumb' />
-                                                        : <div className='item-thumb' style={{ background: '#f0ede4' }} />}
-                                                </td>
-                                                <td>{item.name}</td>
-                                                <td>{item.quantity}</td>
-                                                <td>{item.category}</td>
-                                                <td className='notes-cell'>{item.notes}</td>
-                                                <td className='actions-cell'>
-                                                    <button className='edit-button' onClick={() => openEditModal(item)}>Edit</button>
-                                                    <button className='delete-button' onClick={() => setDeleteTarget(item)}>Delete</button>
-                                                </td>
-                                            </tr>
-                                        ))}
-                                    </tbody>
-                                </table>
-                            )}
-                        </div>
                     </div>
+
+                    <div className='table-wrapper'>
+                        {status === 'loading' && <TextComponent variant='p' className='empty-row'>Loading...</TextComponent>}
+
+                        {status !== 'loading' && (
+                            <table id='item-table'>
+                                <thead>
+                                    <tr>
+                                        <th></th>
+                                        <th>Name</th>
+                                        <th>Quantity</th>
+                                        <th>Category</th>
+                                        <th>Notes</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {sortedItems.length === 0 && (
+                                        <tr>
+                                            <td colSpan={6} className='empty-row'>No items yet.</td>
+                                        </tr>
+                                    )}
+                                    {sortedItems.map(item => (
+                                        <tr key={item.id}>
+                                            <td>
+                                                {item.image
+                                                    ? <img src={item.image} alt={item.name} className='item-thumb' />
+                                                    : <div className='item-thumb' style={{ background: '#f0ede4' }} />}
+                                            </td>
+                                            <td>{item.name}</td>
+                                            <td>{item.quantity}</td>
+                                            <td>{item.category}</td>
+                                            <td className='notes-cell'>{item.notes}</td>
+                                            <td className='actions-cell'>
+                                                <button className='edit-button' onClick={() => openEditModal(item)}>Edit</button>
+                                                <button className='delete-button' onClick={() => setDeleteTarget(item)}>Delete</button>
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        )}
+                    </div>
+                </div>
             </main>
 
             <AddItem

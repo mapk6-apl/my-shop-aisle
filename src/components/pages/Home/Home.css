@@ -433,6 +433,44 @@ html, body, #root {
     cursor: pointer;
 }
 
+.profile-form-field {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 16px;
+    max-width: 320px;
+}
+
+.profile-form-field label {
+    margin-bottom: 6px;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.profile-form-field input {
+    padding: 10px 12px;
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    font-size: 14px;
+}
+
+.save-profile-button {
+    background: var(--color-primary);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: 10px 22px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    margin-top: 8px;
+}
+
+.form-success {
+    color: var(--color-sidebar);
+    font-size: 13px;
+    margin-top: 8px;
+}
+
 @media (max-width: 1024px) {
     #side-bar {
         width: 30%;
