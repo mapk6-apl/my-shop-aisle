@@ -1,12 +1,14 @@
 import { configureStore } from '@reduxjs/toolkit'
 import shoppingListReducer from './shoppingListSlice'
 import profileReducer from './profileSlice'
+import authReducer from './authSlice'
 
 
 export const store = configureStore({
     reducer: {
         shoppingList: shoppingListReducer,
-        profile: profileReducer
+        profile: profileReducer,
+        auth: authReducer
     }
 })
 
