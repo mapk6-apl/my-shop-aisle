@@ -1,7 +1,7 @@
 import { TextComponent } from '../../../TextComponent'
 import { ButtonComponent } from '../../../ButtonComponent'
 import backArrow from '../../../assets/back-arrow.png'
-import './login.css'
+import './Login.css'
 import { TextInput } from '../../inputs/TextInput'
 import { useNavigate } from 'react-router'
 import { CheckboxInput } from '../../inputs/CheckboxInput'

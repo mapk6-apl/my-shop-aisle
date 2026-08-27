@@ -1,5 +1,5 @@
 import React from 'react'
-import './textinput.css'
+import './Textinput.css'
 
 type TextInputProps = {
     id?: string,
