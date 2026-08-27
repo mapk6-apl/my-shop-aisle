@@ -4,6 +4,5 @@ export type ShoppingItem = {
     quantity: number
     category: string
     notes: string
-    isChecked: boolean
     image: string | null
 }

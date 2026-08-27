@@ -20,19 +20,24 @@ const initialState: ShoppingListState = {
     status: 'idle'
 }
 
-export const fetchItems = createAsyncThunk('shoppingList/fetchItems', async () => {
-    const response = await fetch(`${API_BASE_URL}/items`)
+
+
+export const fetchItems = createAsyncThunk('shoppingList/fetchItems', async (userId: string) => {
+    const response = await fetch(`${API_BASE_URL}/items?userId=${userId}`)
     return (await response.json()) as ShoppingItem[]
 })
 
-export const addItem = createAsyncThunk('shoppingList/addItem', async (data: ItemFormData) => {
-    const response = await fetch(`${API_BASE_URL}/items`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...data, isChecked: false })
-    })
-    return (await response.json()) as ShoppingItem
-})
+export const addItem = createAsyncThunk(
+    'shoppingList/addItem',
+    async ({ userId, data }: { userId: string, data: ItemFormData }) => {
+        const response = await fetch(`${API_BASE_URL}/items`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ ...data, userId })
+        })
+        return (await response.json()) as ShoppingItem
+    }
+)
 
 export const editItem = createAsyncThunk(
     'shoppingList/editItem',
@@ -51,22 +56,15 @@ export const deleteItem = createAsyncThunk('shoppingList/deleteItem', async (id:
     return id
 })
 
-export const toggleChecked = createAsyncThunk(
-    'shoppingList/toggleChecked',
-    async (item: ShoppingItem) => {
-        const response = await fetch(`${API_BASE_URL}/items/${item.id}`, {
-            method: 'PATCH',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ isChecked: !item.isChecked })
-        })
-        return (await response.json()) as ShoppingItem
-    }
-)
-
 const shoppingListSlice = createSlice({
     name: 'shoppingList',
     initialState,
-    reducers: {},
+    reducers: {
+        //this clears items from the Redux state on logout so that the next user doesnt see the previous user's list
+        clearItems: (state) => {
+            state.items = []
+        }
+    },
     //the extraReducers listens for the pending/fulfilled/rejected actions that the thunks above fire automatically
     extraReducers: (builder) => {
         builder
@@ -91,11 +89,8 @@ const shoppingListSlice = createSlice({
             .addCase(deleteItem.fulfilled, (state, action: PayloadAction<string>) => {
                 state.items = state.items.filter(item => item.id !== action.payload)
             })
-            .addCase(toggleChecked.fulfilled, (state, action: PayloadAction<ShoppingItem>) => {
-                const index = state.items.findIndex(item => item.id === action.payload.id)
-                if (index !== -1) state.items[index] = action.payload
-            })
     }
 })
 
+export const {clearItems} = shoppingListSlice.actions
 export default shoppingListSlice.reducer

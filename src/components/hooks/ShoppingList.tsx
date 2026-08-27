@@ -25,7 +25,7 @@ export const useShoppingList = () => {
     }
 
     const addItem = (data: ItemFormData) => {
-        const newItem: ShoppingItem = { id: Date.now().toString(), isChecked: false, ...data }
+        const newItem: ShoppingItem = { id: Date.now().toString(), ...data }
         save(items.concat(newItem))
     }
 
@@ -38,10 +38,5 @@ export const useShoppingList = () => {
         save(items.filter(item => item.id !== id))
     }
 
-    const toggleChecked = (id: string) => {
-        const updatedItems = items.map(item => item.id === id ? { ...item, isChecked: !item.isChecked } : item)
-        save(updatedItems)
-    }
-
-    return { items, addItem, editItem, deleteItem, toggleChecked }
+    return { items, addItem, editItem, deleteItem }
 }
