@@ -9,12 +9,15 @@ import { useNavigate, useLocation } from 'react-router'
 import { useState, useEffect, useRef } from 'react'
 import { useAppDispatch, useAppSelector } from '../../../store/hooks'
 import { fetchProfile, updateProfile } from '../../../store/profileSlice'
+import { logout } from '../../../store/authSlice'
+import { clearItems } from '../../../store/shoppingListSlice'
 import '../Home/Home.css'
 
 export const Profile = () => {
     const navigate = useNavigate();
     const location = useLocation();
     const dispatch = useAppDispatch();
+    const currentUser = useAppSelector(state => state.auth.currentUser);
     const profile = useAppSelector(state => state.profile.profile);
     const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -24,8 +27,10 @@ export const Profile = () => {
     const [saved, setSaved] = useState(false);
 
     useEffect(() => {
-        dispatch(fetchProfile());
-    }, [dispatch]);
+        if (currentUser) {
+            dispatch(fetchProfile(currentUser.id));
+        }
+    }, [dispatch, currentUser]);
 
     useEffect(() => {
         if (profile) {
@@ -37,16 +42,17 @@ export const Profile = () => {
 
     const handlePictureChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
-        if (!file) return;
+        if (!file || !profile) return;
         const reader = new FileReader();
         reader.onload = () => {
-            dispatch(updateProfile({ picture: reader.result as string }));
+            dispatch(updateProfile({ profileId: profile.id, data: { picture: reader.result as string } }));
         }
         reader.readAsDataURL(file);
     }
 
     const handleSaveChanges = async () => {
-        await dispatch(updateProfile({ name, surname, cellNumber }));
+        if (!profile) return;
+        await dispatch(updateProfile({ profileId: profile.id, data: { name, surname, cellNumber } }));
         setSaved(true);
         setTimeout(() => setSaved(false), 2000);
     }
@@ -76,7 +82,11 @@ export const Profile = () => {
                         <img src={profileBar} alt='Profile Bar Icon' id='profile-bar-icon' />
                         <TextComponent variant='p'>Profile</TextComponent>
                     </div>
-                    <img src={logoutIcon} alt='Logout Icon' onClick={() => navigate('/')} id='logout-icon' />
+                    <img src={logoutIcon} alt='Logout Icon' onClick={() => {
+                        dispatch(logout());
+                        dispatch(clearItems());
+                        navigate('/');
+                    }} id='logout-icon' />
                     <TextComponent variant='p'>Logout</TextComponent>
                 </div>
 
@@ -99,7 +109,7 @@ export const Profile = () => {
                         </div>
                     </div>
 
-                    <div className='profile-form-field'>
+                    <div className='profile-form-field' style={{marginTop: '30px'}}>
                         <label>Name</label>
                         <input value={name} onChange={(e) => setName(e.target.value)} />
                     </div>

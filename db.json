@@ -7,6 +7,14 @@
       "passwordHash": "$2b$10$PmL38m4qKVkY3jggWbkhF.wdZzdIGuSEFSpjczVtnY5Fo6mpaeKMC",
       "cellNumber": "098",
       "id": "YjxMw1mnrGE"
+    },
+    {
+      "name": "Juju",
+      "surname": "Jack",
+      "email": "jack@user.com",
+      "passwordHash": "$2b$10$KSYgdj1HwrbaAV1XRK90VOLfd6R7Omms/gKZ1oAPWVq55nBuYMzNi",
+      "cellNumber": "123",
+      "id": "1N9qWp9GG7w"
     }
   ],
   "items": [
@@ -18,6 +26,51 @@
       "image": null,
       "isChecked": false,
       "id": "oWY510akQyo"
+    },
+    {
+      "name": "Apples",
+      "quantity": 2,
+      "category": "Fruits",
+      "notes": "My healthy food.",
+      "image": null,
+      "userId": "YjxMw1mnrGE",
+      "id": "ePZIEno9Xfc"
+    },
+    {
+      "name": "Bananananana",
+      "quantity": 9,
+      "category": "Fruit",
+      "notes": "My fruit",
+      "image": null,
+      "userId": "1N9qWp9GG7w",
+      "id": "humjAcZU-qU"
+    },
+    {
+      "name": "Pear",
+      "quantity": 1,
+      "category": "",
+      "notes": "",
+      "image": null,
+      "userId": "YjxMw1mnrGE",
+      "id": "dHhIU6opBe8"
+    },
+    {
+      "name": "milk",
+      "quantity": 1,
+      "category": "",
+      "notes": "",
+      "image": null,
+      "userId": "YjxMw1mnrGE",
+      "id": "1YncNmXjWEE"
+    },
+    {
+      "name": "grape",
+      "quantity": 1,
+      "category": "",
+      "notes": "",
+      "image": null,
+      "userId": "YjxMw1mnrGE",
+      "id": "gnWvU08lPNU"
     }
   ],
   "profiles": [
@@ -28,6 +81,14 @@
       "cellNumber": "098",
       "picture": null,
       "id": "w2cjlX8YsBA"
+    },
+    {
+      "userId": "1N9qWp9GG7w",
+      "name": "Juju",
+      "surname": "Jack",
+      "cellNumber": "123",
+      "picture": null,
+      "id": "fsyR8LE0V5k"
     }
   ],
   "$schema": "./node_modules/json-server/schema.json"

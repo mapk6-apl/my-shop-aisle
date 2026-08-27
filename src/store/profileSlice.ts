@@ -13,16 +13,17 @@ const initialState: ProfileState = {
 }
 
 //gets the current profile from the server
-export const fetchProfile = createAsyncThunk('profile/fetchProfile', async () => {
+export const fetchProfile = createAsyncThunk('profile/fetchProfile', async (userId: string) => {
     const response = await fetch(`${API_BASE_URL}/profile`)
-    return (await response.json()) as Profile
+    const profiles = (await response.json()) as Profile[]
+    return profiles[0] || null
 })
 
 //updates any subset of profile fields (name, surname, cellNumber, picture)
 export const updateProfile = createAsyncThunk(
     'profile/updateProfile',
-    async (data: Partial<Omit<Profile, 'id'>>) => {
-        const response = await fetch(`${API_BASE_URL}/profile`, {
+    async ({ profileId, data }: { profileId: number, data: Partial<Omit<Profile, 'id' | 'userId'>> }) => {
+        const response = await fetch(`${API_BASE_URL}/profiles/${profileId}`, {
             method: 'PATCH',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(data)
@@ -34,7 +35,11 @@ export const updateProfile = createAsyncThunk(
 const profileSlice = createSlice({
     name: 'profile',
     initialState,
-    reducers: {},
+    reducers: {
+        clearProfile: (state) => {
+            state.profile = null
+        }
+    },
     extraReducers: (builder) => {
         builder
             .addCase(fetchProfile.pending, (state) => {
@@ -53,4 +58,5 @@ const profileSlice = createSlice({
     }
 })
 
+export const {clearProfile} = profileSlice.actions
 export default profileSlice.reducer

@@ -9,12 +9,14 @@ import { useNavigate, useSearchParams } from 'react-router'
 import { useState, useEffect, useRef } from 'react'
 import { useLocation } from 'react-router'
 import { useAppDispatch, useAppSelector } from '../../../store/hooks'
-import { fetchItems, addItem, editItem, deleteItem, toggleChecked } from '../../../store/shoppingListSlice'
+import { fetchItems, addItem, editItem, deleteItem } from '../../../store/shoppingListSlice'
 import { AddItem } from '../../AddItem/AddItem'
 import { Overlay } from '../../Overlay/Overlay'
 import type { ShoppingItem } from '../../types/ShoppingItem'
 import './Home.css'
 import { fetchProfile } from '../../../store/profileSlice'
+import { logout } from '../../../store/authSlice'
+import { clearItems } from '../../../store/shoppingListSlice'
 
 type SortOption = 'name' | 'category' | 'date-added'
 
@@ -29,6 +31,7 @@ export const Home = () => {
     const dispatch = useAppDispatch();
     const items = useAppSelector(state => state.shoppingList.items);
     const status = useAppSelector(state => state.shoppingList.status);
+    const currentUser = useAppSelector(state => state.auth.currentUser);
     const profile = useAppSelector(state => state.profile.profile);
 
     const [searchParams, setSearchParams] = useSearchParams();
@@ -47,8 +50,10 @@ export const Home = () => {
     const filterRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
-        dispatch(fetchItems());
-        dispatch(fetchProfile());
+        if (currentUser) {
+            dispatch(fetchItems(currentUser.id));
+            dispatch(fetchProfile(currentUser.id));
+        }
     }, [dispatch]);
 
     useEffect(() => {
@@ -91,10 +96,11 @@ export const Home = () => {
     }
 
     const handleSave = (data: { name: string, quantity: number, category: string, notes: string, image: string | null }) => {
+        if (!currentUser) return;
         if (editingItem) {
             dispatch(editItem({ id: editingItem.id, data }));
         } else {
-            dispatch(addItem(data));
+            dispatch(addItem({ userId: currentUser.id, data }));
         }
     }
 
@@ -159,7 +165,11 @@ export const Home = () => {
                         <img src={profileBar} alt='Profile Bar Icon' id='profile-bar-icon' />
                         <TextComponent variant='p'>Profile</TextComponent>
                     </div>
-                    <img src={logoutIcon} alt='Logout Icon' onClick={() => navigate('/')} id='logout-icon' />
+                    <img src={logoutIcon} alt='Logout Icon' onClick={() => {
+                        dispatch(logout());
+                        dispatch(clearItems());
+                        navigate('/');
+                    }} id='logout-icon' />
                     <TextComponent variant='p'>Logout</TextComponent>
                 </div>
 
