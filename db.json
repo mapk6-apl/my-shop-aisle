@@ -1,5 +1,14 @@
 {
-  "users": [],
+  "users": [
+    {
+      "name": "Mark",
+      "surname": "Johnson",
+      "email": "mark@user.com",
+      "passwordHash": "$2b$10$PmL38m4qKVkY3jggWbkhF.wdZzdIGuSEFSpjczVtnY5Fo6mpaeKMC",
+      "cellNumber": "098",
+      "id": "YjxMw1mnrGE"
+    }
+  ],
   "items": [
     {
       "name": "woooo",
@@ -11,6 +20,15 @@
       "id": "oWY510akQyo"
     }
   ],
-  "profiles": [],
+  "profiles": [
+    {
+      "userId": "YjxMw1mnrGE",
+      "name": "Mark",
+      "surname": "Johnson",
+      "cellNumber": "098",
+      "picture": null,
+      "id": "w2cjlX8YsBA"
+    }
+  ],
   "$schema": "./node_modules/json-server/schema.json"
 }

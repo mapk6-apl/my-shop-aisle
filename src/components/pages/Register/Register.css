@@ -2,3 +2,9 @@
     width: 20px;
     cursor: pointer;
 }
+
+.form-error {
+    color: #e5484d;
+    font-size: 13px;
+    margin: 4px 0;
+}

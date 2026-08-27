@@ -68,6 +68,7 @@ export const registerUser = createAsyncThunk(
     }
 )
 
+//this thunk restores the session after a refresh
 export const loginUser = createAsyncThunk(
     'auth/loginUser',
     async ({ email, password }: { email: string, password: string }, { rejectWithValue }) => {
@@ -88,6 +89,15 @@ export const loginUser = createAsyncThunk(
         return user
     }
 )
+
+export const restoreSession = createAsyncThunk('auth/restoreSession', async () => {
+    const userId = localStorage.getItem('current-user-id')
+    if (!userId) return null
+
+    const response = await fetch(`${API_BASE_URL}/users/${userId}`)
+    if (!response.ok) return null
+    return (await response.json()) as User
+})
 
 const authSlice = createSlice({
     name: 'auth',
@@ -123,6 +133,10 @@ const authSlice = createSlice({
             .addCase(loginUser.rejected, (state, action) => {
                 state.status = 'failed'
                 state.error = (action.payload as string) || 'Login failed.'
+            })
+            //if theres a saved user id on app load, it asks the server for the user again to log them back in automatically
+            .addCase(restoreSession.fulfilled, (state, action: PayloadAction<User | null>) => {
+                state.currentUser = action.payload
             })
     }
 })
