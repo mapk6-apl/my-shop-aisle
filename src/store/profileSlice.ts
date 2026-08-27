@@ -14,7 +14,7 @@ const initialState: ProfileState = {
 
 //gets the current profile from the server
 export const fetchProfile = createAsyncThunk('profile/fetchProfile', async (userId: string) => {
-    const response = await fetch(`${API_BASE_URL}/profile`)
+    const response = await fetch(`${API_BASE_URL}/profiles?userId=${userId}`)
     const profiles = (await response.json()) as Profile[]
     return profiles[0] || null
 })

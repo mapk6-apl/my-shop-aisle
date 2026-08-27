@@ -45,7 +45,6 @@ export const Home = () => {
     const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
 
     const location = useLocation();
-    const [selectedNames, setSelectedNames] = useState<string[]>([]);
     const sortRef = useRef<HTMLDivElement>(null);
     const filterRef = useRef<HTMLDivElement>(null);
 
@@ -54,7 +53,7 @@ export const Home = () => {
             dispatch(fetchItems(currentUser.id));
             dispatch(fetchProfile(currentUser.id));
         }
-    }, [dispatch]);
+    }, [dispatch, currentUser]);
 
     useEffect(() => {
         const handleClickOutside = (e: MouseEvent) => {
@@ -113,10 +112,16 @@ export const Home = () => {
 
     const nameOptions = Array.from(new Set(items.map(item => item.name)));
 
+    const filterParam = searchParams.get('filter') || ''
+    const selectedNames = filterParam ? filterParam.split(',') : []
+
     const toggleNameFilter = (name: string) => {
-        setSelectedNames(prev =>
-            prev.includes(name) ? prev.filter(n => n !== name) : prev.concat(name)
-        );
+        const next = new URLSearchParams(searchParams)
+        const updated = selectedNames.includes(name)
+            ? selectedNames.filter(n => n !== name)
+            : selectedNames.concat(name)
+        if (updated.length) next.set('filter', updated.join(',')); else next.delete('filter')
+        setSearchParams(next)
     }
 
     let visibleItems = items.filter(item =>
@@ -181,9 +186,16 @@ export const Home = () => {
                         </div>
                         <ButtonComponent onClick={openAddModal} className='add-item-button'>+ Add New Item</ButtonComponent>
                     </div>
-
+                    
+                    
                     <div id='buttons'>
-                        <ButtonComponent onClick={() => setSelectedNames([])}
+                        {/* when the All button is clicked,  the selected filters are cleared and every item is shown */}
+                        <ButtonComponent
+                            onClick={() => {
+                                const next = new URLSearchParams(searchParams)
+                                next.delete('filter')
+                                setSearchParams(next)
+                            }}
                             className={selectedNames.length === 0 ? 'chip chip-active' : 'chip'}>
                             All
                         </ButtonComponent>
