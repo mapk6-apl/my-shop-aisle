@@ -1,5 +1,16 @@
 {
-    "users": [],
-    "items": [],
-    "profiles": []
+  "users": [],
+  "items": [
+    {
+      "name": "woooo",
+      "quantity": 1,
+      "category": "oooooh",
+      "notes": "",
+      "image": null,
+      "isChecked": false,
+      "id": "oWY510akQyo"
+    }
+  ],
+  "profiles": [],
+  "$schema": "./node_modules/json-server/schema.json"
 }

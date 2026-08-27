@@ -6,16 +6,20 @@ import { TextInput } from '../../inputs/TextInput'
 import { useNavigate } from 'react-router'
 import { CheckboxInput } from '../../inputs/CheckboxInput'
 import { useState } from 'react'
-import { useAppDispatch } from '../../../store/hooks'
-import { updateProfile } from '../../../store/profileSlice'
+import { useAppDispatch, useAppSelector } from '../../../store/hooks'
+import { registerUser } from '../../../store/authSlice'
 
 export const Register = () => {
     const [name, setName] = useState('')
     const [surname, setSurname] = useState('')
+    const [email, setEmail] = useState('')
+    const [password, setPassword] = useState('')
     const [cellNumber, setCellNumber] = useState('')
     const [agreeToTerms, setAgreeToTerms] = useState<boolean>(false)
 
     const dispatch = useAppDispatch()
+    const status = useAppSelector(state => state.auth.status)
+    const error = useAppSelector(state => state.auth.error)
     const navigate = useNavigate()
 
     const handleCheck = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -24,8 +28,13 @@ export const Register = () => {
 
     const handleSubmit = async () => {
         if (!agreeToTerms) return
-        await dispatch(updateProfile({ name, surname, cellNumber }))
-        navigate('/Home')
+
+        const result = await dispatch(registerUser({ name, surname, email, password, cellNumber }))
+
+        //checks whether the thunk succeeded or was rejected and will only navigate if it actually worked
+        if (registerUser.fulfilled.match(result)) {
+            navigate('/Home')
+        }
     }
 
     return (
@@ -36,12 +45,17 @@ export const Register = () => {
             <div className='register-fields'>
                 <TextInput label='Name' id='name' placeholder='eg. Mark' type='text' value={name} onChange={(e) => setName(e.target.value)} />
                 <TextInput label='Surname' id='surname' placeholder='eg. Johnson' type='text' value={surname} onChange={(e) => setSurname(e.target.value)} />
-                <TextInput label='Email' id='email' placeholder='markjohnson@example.com' type='email' />
-                <TextInput label='Password' id='password' placeholder='*********' type='password' />
+                <TextInput label='Email' id='email' placeholder='markjohnson@example.com' type='email' value={email} onChange={(e) => setEmail(e.target.value)} />
+                <TextInput label='Password' id='password' placeholder='*********' type='password' value={password} onChange={(e) => setPassword(e.target.value)} />
                 <TextInput label='Cell Number' id='cellNumber' placeholder='(+27) 123 456 789' type='text' value={cellNumber} onChange={(e) => setCellNumber(e.target.value)} />
 
                 <CheckboxInput id='agree-checkbox' name='terms' checked={agreeToTerms} onChange={handleCheck} label={' I agree to the Terms & Conditions.'} />
-                <ButtonComponent onClick={handleSubmit} className='button-2'>Sign Up</ButtonComponent>
+
+                {error && <p className='form-error'>{error}</p>}
+
+                <ButtonComponent onClick={handleSubmit} className='button-2'>
+                    {status === 'loading' ? 'Signing up...' : 'Sign Up'}
+                </ButtonComponent>
             </div>
         </div>
     )
