@@ -31,21 +31,23 @@ export const Login = () => {
     }
 
     return (
-        <div className='login-page'>
-            <img src={backArrow} alt='Back Arrow Icon' id='back-arrow' onClick={() => navigate('/')} />
-            <TextComponent variant='h3'>WELCOME BACK!</TextComponent>
-            <TextComponent variant='h1'>Sign In</TextComponent>
-            <div className='login-fields'>
-                <TextInput label='Email' id='email' placeholder='markjohnson@example.com' type='email' value={email} onChange={(e) => setEmail(e.target.value)} />
-                <TextInput label='Password' id='password' placeholder='*********' type='password' value={password} onChange={(e) => setPassword(e.target.value)} />
+        <div className='login-wrapper'>
+            <div className='login-page'>
+                <img src={backArrow} alt='Back Arrow Icon' id='back-arrow' onClick={() => navigate('/')} />
+                <TextComponent variant='h3'>WELCOME BACK!</TextComponent>
+                <TextComponent variant='h1'>Sign In</TextComponent>
+                <div className='login-fields'>
+                    <TextInput label='Email' id='email' placeholder='markjohnson@example.com' type='email' value={email} onChange={(e) => setEmail(e.target.value)} />
+                    <TextInput label='Password' id='password' placeholder='*********' type='password' value={password} onChange={(e) => setPassword(e.target.value)} />
 
-                <CheckboxInput id='remember-me-checkbox' name='remember-me' checked={rememberMe} onChange={handleCheck} label={' Remember me'} />
+                    <CheckboxInput id='remember-me-checkbox' name='remember-me' checked={rememberMe} onChange={handleCheck} label={' Remember me'} />
 
-                {error && <p className='form-error'>{error}</p>}
+                    {error && <p className='form-error'>{error}</p>}
 
-                <ButtonComponent onClick={handleSubmit} className='button-2'>
-                    {status === 'loading' ? 'Signing in...' : 'Sign In'}
-                </ButtonComponent>
+                    <ButtonComponent onClick={handleSubmit} className='button-2'>
+                        {status === 'loading' ? 'Signing in...' : 'Sign In'}
+                    </ButtonComponent>
+                </div>
             </div>
         </div>
     )

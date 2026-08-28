@@ -53,7 +53,7 @@ export const Profile = () => {
         setFormError('');
 
         await dispatch(updateProfile({ profileId: profile.id, data: { name, surname, cellNumber } }));
-
+        
         //only touch password if the user actually typed something into either field
         if (currentPassword || newPassword) {
             if (!currentPassword || !newPassword) {
@@ -110,8 +110,10 @@ export const Profile = () => {
                         <TextComponent variant='p'>Profile</TextComponent>
                     </div>
 
-                    <img src={logoutIcon} alt='Logout Icon' onClick={handleLogout} id='logout-icon' />
-                    <TextComponent variant='p'>Logout</TextComponent>
+                    <div className='nav-item' onClick={handleLogout}>
+                        <img src={logoutIcon} alt='Logout Icon' id='logout-icon' />
+                        <TextComponent variant='p'>Logout</TextComponent>
+                    </div>
                 </div>
 
                 <div className='main-screen'>

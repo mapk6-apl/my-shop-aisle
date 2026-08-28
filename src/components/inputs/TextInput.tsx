@@ -14,13 +14,11 @@ type TextInputProps = {
 }
 
 export const TextInput: React.FC<TextInputProps> = ({id, value, onChange, label, error, name, placeholder, className, type}) => {
-  return (
-    <div>
-        <label className='input-label'>{label}</label>
-        <input type={type} id={id} value={value} name={name} onChange={onChange} placeholder={placeholder} className='input-field' />
-        {error && 
-            <p className='input-error'>{error}</p>
-        }
-    </div>
-  )
+    return (
+        <div className='form-field'>
+            <label className='input-label' htmlFor={id}>{label}</label>
+            <input type={type} id={id} value={value} name={name} onChange={onChange} placeholder={placeholder} className={className ? `input-field ${className}` : 'input-field'} />
+            {error && <p className='input-error'>{error}</p>}
+        </div>
+    )
 }

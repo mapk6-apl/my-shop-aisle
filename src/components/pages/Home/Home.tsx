@@ -42,7 +42,6 @@ export const Home = () => {
 
     const [showSortMenu, setShowSortMenu] = useState(false);
     const [showFilters, setShowFilters] = useState(false);
-    const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
 
     const location = useLocation();
     const sortRef = useRef<HTMLDivElement>(null);
@@ -170,12 +169,14 @@ export const Home = () => {
                         <img src={profileBar} alt='Profile Bar Icon' id='profile-bar-icon' />
                         <TextComponent variant='p'>Profile</TextComponent>
                     </div>
-                    <img src={logoutIcon} alt='Logout Icon' onClick={() => {
+                    <div className='nav-item' onClick={() => {
                         dispatch(logout());
                         dispatch(clearItems());
                         navigate('/');
-                    }} id='logout-icon' />
-                    <TextComponent variant='p'>Logout</TextComponent>
+                    }}>
+                        <img src={logoutIcon} alt='Logout Icon' id='logout-icon' />
+                        <TextComponent variant='p'>Logout</TextComponent>
+                    </div>
                 </div>
 
                 <div className='main-screen'>
@@ -186,8 +187,8 @@ export const Home = () => {
                         </div>
                         <ButtonComponent onClick={openAddModal} className='add-item-button'>+ Add New Item</ButtonComponent>
                     </div>
-                    
-                    
+
+
                     <div id='buttons'>
                         {/* when the All button is clicked,  the selected filters are cleared and every item is shown */}
                         <ButtonComponent
