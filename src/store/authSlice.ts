@@ -28,43 +28,57 @@ export const registerUser = createAsyncThunk(
     'auth/registerUser',
     async (data: RegisterData, { rejectWithValue }) => {
         //this checks if the email is already registered
-        const existingResponse = await fetch(`${API_BASE_URL}/users?email=${encodeURIComponent(data.email)}`)
-        const existingUsers = await existingResponse.json()
-        if (existingUsers.length > 0) {
-            return rejectWithValue('An account with this email already exists.') //if it exists, user gets this
+        try {
+            const existingResponse = await fetch(`${API_BASE_URL}/users?email=${encodeURIComponent(data.email)}`)
+            if (!existingResponse.ok) {
+                return rejectWithValue(`Could not reach server (status ${existingResponse.status}).`)
+            }
+            const existingUsers = await existingResponse.json()
+            if (existingUsers.length > 0) {
+                return rejectWithValue('An account with this email already exists.') //if it exists, user gets this
+            }
+
+            //here we hash the password before it leaves the browser
+            const passwordHash = await bcrypt.hash(data.password, 10)
+
+            const response = await fetch(`${API_BASE_URL}/users`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    name: data.name,
+                    surname: data.surname,
+                    email: data.email,
+                    passwordHash,
+                    cellNumber: data.cellNumber
+                })
+            })
+            if (!response.ok) {
+                return rejectWithValue(`Failed to create user (status ${response.status}).`)
+            }
+            const user = (await response.json()) as User
+
+            //we create a new empty profile record for the new user
+            const profileResponse = await fetch(`${API_BASE_URL}/profiles`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    userId: user.id,
+                    name: data.name,
+                    surname: data.surname,
+                    cellNumber: data.cellNumber,
+                    picture: null
+                })
+            })
+            if (!profileResponse.ok) {
+                return rejectWithValue(`Failed to create profile (status ${profileResponse.status}).`)
+            }
+
+            localStorage.setItem('current-user-id', user.id)
+            return user
+
+        } catch (error) {
+            return rejectWithValue(error instanceof Error ? error.message : 'Something went wrong. Please try again.')
         }
-
-        //here we hash the password before it leaves the browser
-        const passwordHash = await bcrypt.hash(data.password, 10)
-
-        const response = await fetch(`${API_BASE_URL}/users`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                name: data.name,
-                surname: data.surname,
-                email: data.email,
-                passwordHash,
-                cellNumber: data.cellNumber
-            })
-        })
-        const user = (await response.json()) as User
-
-        //we create a new empty profile record for the new user
-        await fetch(`${API_BASE_URL}/profiles`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                userId: user.id,
-                name: data.name,
-                surname: data.surname,
-                cellNumber: data.cellNumber,
-                picture: null
-            })
-        })
-
-        localStorage.setItem('current-user-id', user.id)
-        return user
     }
 )
 
