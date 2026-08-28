@@ -42,6 +42,7 @@ html, body, #root {
 .searchbar {
     display: flex;
     align-items: center;
+    margin: auto;
     gap: 8px;
     background: var(--color-sand);
     border-radius: 999px;

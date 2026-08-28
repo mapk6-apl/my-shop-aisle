@@ -93,9 +93,6 @@ export const Profile = () => {
         <div className='home-screen'>
             <nav className='navbar'>
                 <TextComponent variant='h3'>My Shop Aisle</TextComponent>
-                <div className='searchbar'>
-                    <img src={searchIcon} alt='Search Icon' id='search-icon' />
-                </div>
             </nav>
 
             <main className='main-content'>
