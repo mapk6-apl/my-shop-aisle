@@ -6,6 +6,7 @@ import { TextInput } from '../inputs/TextInput'
 import closeIcon from '../../assets/close.png'
 import type { ShoppingItem } from '../types/ShoppingItem'
 import './AddItem.css'
+import { ImageSearch } from '../ImageSearch/ImageSearch'
 
 type AddItemProps = {
     isVisible: boolean
@@ -36,14 +37,6 @@ export const AddItem: React.FC<AddItemProps> = ({ isVisible, onClose, onSave, ed
             setImage(null)
         }
     }, [isVisible, editingItem])
-
-    const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const file = e.target.files?.[0]
-        if (!file) return
-        const reader = new FileReader()
-        reader.onload = () => setImage(reader.result as string)
-        reader.readAsDataURL(file)
-    }
 
     const handleSave = () => {
         if (!name) return
@@ -91,8 +84,8 @@ export const AddItem: React.FC<AddItemProps> = ({ isVisible, onClose, onSave, ed
                     ) : (
                         <div className='image-preview-placeholder'>No image</div>
                     )}
-                    <input type='file' accept='image/*' onChange={handleImageChange} className='image-upload-input' />
                 </div>
+                <ImageSearch onSelect={(url) => setImage(url)} />
 
                 <div className='add-cancel-buttons'>
                     <ButtonComponent className='cancel' onClick={onClose}>Cancel</ButtonComponent>

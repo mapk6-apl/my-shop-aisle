@@ -1,0 +1,8 @@
+.image-search-row { display: flex; gap: 8px; margin-bottom: 10px; }
+.image-search-row input { flex: 1; padding: 8px 10px; border: 1px solid #ece5d8; border-radius: 8px; font-size: 14px; }
+.image-search-row button { padding: 8px 14px; border: none; border-radius: 8px; background: #0F766E; color: #fff; cursor: pointer; font-size: 14px; }
+.image-search-loading { font-size: 13px; color: #8a8578; margin-bottom: 8px; }
+.image-search-results { display: flex; gap: 8px; flex-wrap: wrap; }
+.image-search-thumb { width: 56px; height: 56px; object-fit: cover; border-radius: 6px; cursor: pointer; border: 2px solid transparent; }
+.image-search-thumb:hover { border-color: #FF7F50; }
+.image-search-thumb-selected { border-color: #0F766E; }
