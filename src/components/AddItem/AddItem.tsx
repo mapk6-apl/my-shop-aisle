@@ -78,14 +78,7 @@ export const AddItem: React.FC<AddItemProps> = ({ isVisible, onClose, onSave, ed
                 </div>
 
                 <TextComponent variant='p' className='form-section-label'>Image</TextComponent>
-                <div className='image-upload-row'>
-                    {image ? (
-                        <img src={image} alt='Item preview' className='image-preview' />
-                    ) : (
-                        <div className='image-preview-placeholder'>No image</div>
-                    )}
-                </div>
-                <ImageSearch onSelect={(url) => setImage(url)} />
+                <ImageSearch query={name} onSelect={(url) => setImage(url)} />
 
                 <div className='add-cancel-buttons'>
                     <ButtonComponent className='cancel' onClick={onClose}>Cancel</ButtonComponent>
