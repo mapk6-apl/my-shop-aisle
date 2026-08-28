@@ -6,25 +6,32 @@ import homeBar from '../../../assets/home.png'
 import profileBar from '../../../assets/profile.png'
 import logoutIcon from '../../../assets/logout.png'
 import { useNavigate, useLocation } from 'react-router'
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect } from 'react'
 import { useAppDispatch, useAppSelector } from '../../../store/hooks'
 import { fetchProfile, updateProfile } from '../../../store/profileSlice'
-import { logout } from '../../../store/authSlice'
+import { logout, changePassword } from '../../../store/authSlice'
 import { clearItems } from '../../../store/shoppingListSlice'
+import { AvatarPicker } from './AvatarPicker'
 import '../Home/Home.css'
 
 export const Profile = () => {
     const navigate = useNavigate();
     const location = useLocation();
     const dispatch = useAppDispatch();
+
     const currentUser = useAppSelector(state => state.auth.currentUser);
+    const authError = useAppSelector(state => state.auth.error);
     const profile = useAppSelector(state => state.profile.profile);
-    const fileInputRef = useRef<HTMLInputElement>(null);
 
     const [name, setName] = useState('');
     const [surname, setSurname] = useState('');
     const [cellNumber, setCellNumber] = useState('');
     const [saved, setSaved] = useState(false);
+    const [saving, setSaving] = useState(false);
+    const [formError, setFormError] = useState('');
+
+    const [currentPassword, setCurrentPassword] = useState('');
+    const [newPassword, setNewPassword] = useState('');
 
     useEffect(() => {
         if (currentUser) {
@@ -40,21 +47,43 @@ export const Profile = () => {
         }
     }, [profile]);
 
-    const handlePictureChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const file = e.target.files?.[0];
-        if (!file || !profile) return;
-        const reader = new FileReader();
-        reader.onload = () => {
-            dispatch(updateProfile({ profileId: profile.id, data: { picture: reader.result as string } }));
+    const handleSave = async () => {
+        if (!profile || !currentUser) return;
+        setSaving(true);
+        setFormError('');
+
+        await dispatch(updateProfile({ profileId: profile.id, data: { name, surname, cellNumber } }));
+
+        //only touch password if the user actually typed something into either field
+        if (currentPassword || newPassword) {
+            if (!currentPassword || !newPassword) {
+                setFormError('Enter both your current and new password to change it.');
+                setSaving(false);
+                return;
+            }
+            const result = await dispatch(changePassword({ userId: currentUser.id, currentPassword, newPassword }));
+            if (!changePassword.fulfilled.match(result)) {
+                setSaving(false);
+                return; //authError from Redux will already show the reason (ex. wrong current password)
+            }
+            setCurrentPassword('');
+            setNewPassword('');
         }
-        reader.readAsDataURL(file);
+
+        setSaved(true);
+        setSaving(false);
+        setTimeout(() => setSaved(false), 2500);
     }
 
-    const handleSaveChanges = async () => {
+    const handleSelectAvatar = (url: string) => {
         if (!profile) return;
-        await dispatch(updateProfile({ profileId: profile.id, data: { name, surname, cellNumber } }));
-        setSaved(true);
-        setTimeout(() => setSaved(false), 2000);
+        dispatch(updateProfile({ profileId: profile.id, data: { picture: url } }));
+    }
+
+    const handleLogout = () => {
+        dispatch(logout());
+        dispatch(clearItems());
+        navigate('/');
     }
 
     const isHomeActive = location.pathname.toLowerCase() === '/home';
@@ -74,6 +103,7 @@ export const Profile = () => {
                     <img src={profile?.picture || defaultProfileIcon} alt='Profile Icon' id='profile-icon' />
                     <TextComponent variant='p'>Welcome Back!</TextComponent>
                     <TextComponent variant='p'>Hi, {profile?.name || 'there'}!</TextComponent>
+
                     <div id='home-bar' className={isHomeActive ? 'nav-item nav-item-active' : 'nav-item'} onClick={() => navigate('/Home')}>
                         <img src={homeBar} alt='Home Bar Icon' id='home-bar-icon' />
                         <TextComponent variant='p'>Home</TextComponent>
@@ -82,11 +112,8 @@ export const Profile = () => {
                         <img src={profileBar} alt='Profile Bar Icon' id='profile-bar-icon' />
                         <TextComponent variant='p'>Profile</TextComponent>
                     </div>
-                    <img src={logoutIcon} alt='Logout Icon' onClick={() => {
-                        dispatch(logout());
-                        dispatch(clearItems());
-                        navigate('/');
-                    }} id='logout-icon' />
+
+                    <img src={logoutIcon} alt='Logout Icon' onClick={handleLogout} id='logout-icon' />
                     <TextComponent variant='p'>Logout</TextComponent>
                 </div>
 
@@ -95,21 +122,15 @@ export const Profile = () => {
 
                     <div className='profile-picture-row'>
                         <img src={profile?.picture || defaultProfileIcon} alt='Current profile' className='profile-large-avatar' />
-                        <div>
-                            <ButtonComponent onClick={() => fileInputRef.current?.click()} className='update-picture-button'>
-                                Update Picture
-                            </ButtonComponent>
-                            <input
-                                type='file'
-                                accept='image/*'
-                                ref={fileInputRef}
-                                onChange={handlePictureChange}
-                                style={{ display: 'none' }}
-                            />
-                        </div>
+                        <TextComponent variant='p' className='list-subtitle'>Pick an avatar below</TextComponent>
                     </div>
 
-                    <div className='profile-form-field' style={{marginTop: '30px'}}>
+                    <AvatarPicker
+                        selectedAvatar={profile?.picture || null}
+                        onSelect={handleSelectAvatar}
+                    />
+
+                    <div className='profile-form-field'>
                         <label>Name</label>
                         <input value={name} onChange={(e) => setName(e.target.value)} />
                     </div>
@@ -122,8 +143,23 @@ export const Profile = () => {
                         <input value={cellNumber} onChange={(e) => setCellNumber(e.target.value)} />
                     </div>
 
-                    <ButtonComponent onClick={handleSaveChanges} className='save-profile-button'>
-                        Save Changes
+                    <TextComponent variant='h4' style={{ marginTop: '32px' }}>Change Password</TextComponent>
+                    <TextComponent variant='p' className='list-subtitle'>Leave blank if you don't want to change your password</TextComponent>
+
+                    <div className='profile-form-field'>
+                        <label>Current Password</label>
+                        <input type='password' value={currentPassword} onChange={(e) => setCurrentPassword(e.target.value)} />
+                    </div>
+                    <div className='profile-form-field'>
+                        <label>New Password</label>
+                        <input type='password' value={newPassword} onChange={(e) => setNewPassword(e.target.value)} />
+                    </div>
+
+                    {formError && <p className='form-error'>{formError}</p>}
+                    {authError && <p className='form-error'>{authError}</p>}
+
+                    <ButtonComponent onClick={handleSave} className='save-profile-button'>
+                        {saving ? 'Saving...' : 'Save Changes'}
                     </ButtonComponent>
                     {saved && <TextComponent variant='p' className='form-success'>Profile updated!</TextComponent>}
                 </div>

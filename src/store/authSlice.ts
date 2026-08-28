@@ -113,6 +113,30 @@ export const restoreSession = createAsyncThunk('auth/restoreSession', async () =
     return (await response.json()) as User
 })
 
+export const changePassword = createAsyncThunk(
+    'auth/changePassword',
+    async (
+        { userId, currentPassword, newPassword }: { userId: string, currentPassword: string, newPassword: string },
+        { rejectWithValue }
+    ) => {
+        const response = await fetch(`${API_BASE_URL}/users/${userId}`)
+        const user = (await response.json()) as User
+
+        const isMatch = await bcrypt.compare(currentPassword, user.passwordHash)
+        if (!isMatch) {
+            return rejectWithValue('Current password is incorrect.')
+        }
+
+        const newHash = await bcrypt.hash(newPassword, 10)
+        const patchResponse = await fetch(`${API_BASE_URL}/users/${userId}`, {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ passwordHash: newHash })
+        })
+        return (await patchResponse.json()) as User
+    }
+)
+
 const authSlice = createSlice({
     name: 'auth',
     initialState,
@@ -151,6 +175,12 @@ const authSlice = createSlice({
             //if theres a saved user id on app load, it asks the server for the user again to log them back in automatically
             .addCase(restoreSession.fulfilled, (state, action: PayloadAction<User | null>) => {
                 state.currentUser = action.payload
+            })
+            .addCase(changePassword.fulfilled, (state, action: PayloadAction<User>) => {
+                state.currentUser = action.payload
+            })
+            .addCase(changePassword.rejected, (state, action) => {
+                state.error = (action.payload as string) || 'Failed to change password.'
             })
     }
 })

@@ -162,7 +162,7 @@ export const Home = () => {
                     <img src={profile?.picture || profileIcon} alt='Profile Icon' id='profile-icon' />
                     <TextComponent variant='p'>Welcome Back!</TextComponent>
                     <TextComponent variant='p'>Hi, {profile?.name || 'there'}!</TextComponent>
-                    <div id='home-bar' onClick={() => navigate('/Home')} className={isHomeActive ? 'nav-item nav-item-active' : 'nav-item'}>
+                    <div id='home-bar' className={isHomeActive ? 'nav-item nav-item-active' : 'nav-item'}>
                         <img src={homeBar} alt='Home Bar Icon' id='home-bar-icon' />
                         <TextComponent variant='p'>Home</TextComponent>
                     </div>
