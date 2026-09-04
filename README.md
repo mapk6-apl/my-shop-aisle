@@ -1,4 +1,4 @@
-<img width="1435" height="826" alt="Screenshot 2026-09-04 at 16 41 12" src="https://github.com/user-attachments/assets/a3342af4-c37b-4776-894b-f6b9e8065165" /># 🛒 My Shop Aisle
+# 🛒 My Shop Aisle
 A clean and simple shopping list web application that lets you register, log in securely, and create, manage, search, sort, and filter your own personal shopping lists; complete with images picked straight from a live photo search.
 
 🚀 **Live Link:** [Click here to open my live app!](https://my-shopping-aisle.vercel.app/)
